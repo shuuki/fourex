@@ -45,7 +45,8 @@ function init() {
   material3 = new THREE.MeshPhongMaterial({
     color: shipColor,
     flatShading: false,
-    wireframe: true
+    wireframe: true,
+    emissive: shipColor,
   });
 
 
@@ -141,8 +142,8 @@ function update() {
   mesh1.rotation.x += 0.5 * delta;
   mesh1.rotation.y += 0.9 * delta;
 
-  let moveDistance = 2 * delta; // 2 pixels per sec
-  let rotateAngle = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
+  let maxMove = 2 * delta; // 2 pixels per sec
+  let maxRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
 
   let rotation_matrix = new THREE.Matrix4().identity();
 
@@ -153,39 +154,39 @@ function update() {
 
   // Power Forward/Back
   if ( keyboard.pressed("W") )
-    shipMesh.translateZ( -moveDistance );
+    shipMesh.translateZ( -maxMove );
   if ( keyboard.pressed("S") )
-    shipMesh.translateZ(  moveDistance );
+    shipMesh.translateZ(  maxMove );
 
   // Slide Left/Right
   if ( keyboard.pressed("Z") )
-    shipMesh.translateX( -moveDistance );
+    shipMesh.translateX( -maxMove );
   if ( keyboard.pressed("C") )
-    shipMesh.translateX(  moveDistance );	
+    shipMesh.translateX(  maxMove );	
 
   // Slide Up/Down
   if ( keyboard.pressed("T") )
-    shipMesh.translateY(  moveDistance );	
+    shipMesh.translateY(  maxMove );	
   if ( keyboard.pressed("G") )
-    shipMesh.translateY( -moveDistance );
+    shipMesh.translateY( -maxMove );
 
   // Pitch
   if ( keyboard.pressed("F") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), maxRot);
   if ( keyboard.pressed("R") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), -maxRot);
 
   // Roll
   if ( keyboard.pressed("Q") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), maxRot);
   if ( keyboard.pressed("E") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -maxRot);
 
   // Yaw
   if ( keyboard.pressed("A") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), maxRot);
   if ( keyboard.pressed("D") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -maxRot);
 
   // Reset Ship
   if ( keyboard.pressed("space") ) {
