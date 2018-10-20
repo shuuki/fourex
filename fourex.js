@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-var material, material2, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, shipMesh;
+var material, material2, material3, geometry1, geometry2, geometry3, geometry4, geometry5, mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -39,14 +39,21 @@ function init() {
   material2 = new THREE.MeshPhongMaterial({
     color: shipColor,
     flatShading: true,
-    //wireframe: true,
     vertexColors: THREE.VertexColors
   });
+
+  material3 = new THREE.MeshPhongMaterial({
+    color: shipColor,
+    flatShading: false,
+    wireframe: true
+  });
+
 
   geometry1 = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
   geometry2 = new THREE.BoxGeometry( 0.1, 2, 2 );
   geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
   geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 3 );
+  geometry5 = new THREE.ConeGeometry( 0.125, 0.375, 3 );
 
   mesh1 = new THREE.Mesh( geometry1, material );
   mesh1.castShadow = true;
@@ -79,6 +86,12 @@ function init() {
   scene.add( shipMesh );
 
 
+  geometry5.rotateX( -1.6 );
+  mesh5 = new THREE.Mesh( geometry5, material3 );
+  mesh5.position.set(0,0,0)
+  //mesh5.castShadow = true;
+  mesh5.receiveShadow = true;
+  shipMesh.add( mesh5 );
 
 
   // Lights
@@ -187,13 +200,9 @@ function update() {
   var relativeCameraOffset = new THREE.Vector3(0,0,0.1); // set inside the cone for now
 
   var cameraOffset = relativeCameraOffset.applyMatrix4( shipMesh.matrixWorld );
+  camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z)
 
-  camera.position.x = cameraOffset.x;
-  camera.position.y = cameraOffset.y;
-  camera.position.z = cameraOffset.z;
-  camera.rotation.x = shipMesh.rotation.x;
-  camera.rotation.y = shipMesh.rotation.y;
-  camera.rotation.z = shipMesh.rotation.z;
+  camera.rotation.set(shipMesh.rotation.x,shipMesh.rotation.y, shipMesh.rotation.z)
 
 }
 
