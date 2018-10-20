@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-var material, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, shipMesh;
+var material, material2, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, shipMesh;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -17,7 +17,9 @@ function init() {
 
   let sunColor = 0xfff3ea
   let skyColor = 0x180918
-  let fogColor = 0x99eeee //new THREE.Color(0x99eeee)
+  let fogColor = 0x99eeee //new THREE.Color(0x99eeee)//
+  let baseColor = 0xeeeeee
+  let shipColor = 0x666666
 
 
   camera = new THREE.PerspectiveCamera(fov, screenWidth / screenHeight, 0.01, 1000);
@@ -29,8 +31,15 @@ function init() {
   // Meshes
 
   material = new THREE.MeshPhongMaterial({
-    color: 0xeeeeee,
+    color: baseColor,
     flatShading: true,
+    vertexColors: THREE.VertexColors
+  });
+  
+  material2 = new THREE.MeshPhongMaterial({
+    color: shipColor,
+    flatShading: true,
+    //wireframe: true,
     vertexColors: THREE.VertexColors
   });
 
@@ -63,8 +72,8 @@ function init() {
   scene.add( mesh4 );
 
   geometry4.rotateX( -1.6 );
-  shipMesh = new THREE.Mesh( geometry4, material );
-  shipMesh.position.set(0,-0.72,0)
+  shipMesh = new THREE.Mesh( geometry4, material2 );
+  shipMesh.position.set(0,-0.72,1)
   shipMesh.castShadow = true;
   shipMesh.receiveShadow = true;
   scene.add( shipMesh );
@@ -120,9 +129,12 @@ function update() {
   mesh1.rotation.y += 0.9 * delta;
 
   let moveDistance = 2 * delta; // 2 pixels per sec
-  let rotateAngle = Math.PI / 2 * delta; // pi/2 radians (90 degrees) per second
+  let rotateAngle = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
 
   let rotation_matrix = new THREE.Matrix4().identity();
+
+
+
 
   // Local Transformations
 
@@ -162,11 +174,26 @@ function update() {
   if ( keyboard.pressed("D") )
     shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
 
-  // reset
+  // Reset Ship
   if ( keyboard.pressed("space") ) {
-    shipMesh.position.set(0,-0.72,0);
+    shipMesh.position.set(0,-0.72,1);
     shipMesh.rotation.set(0,0,0);
   }
+
+
+
+
+  // Chase Cam
+  var relativeCameraOffset = new THREE.Vector3(0,0,0.1); // set inside the cone for now
+
+  var cameraOffset = relativeCameraOffset.applyMatrix4( shipMesh.matrixWorld );
+
+  camera.position.x = cameraOffset.x;
+  camera.position.y = cameraOffset.y;
+  camera.position.z = cameraOffset.z;
+  camera.rotation.x = shipMesh.rotation.x;
+  camera.rotation.y = shipMesh.rotation.y;
+  camera.rotation.z = shipMesh.rotation.z;
 
 }
 
