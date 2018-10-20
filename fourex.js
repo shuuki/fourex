@@ -1,6 +1,9 @@
 var camera, scene, renderer;
 var material, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, mesh5;
 
+var keyboard = new THREEx.KeyboardState();
+var clock = new THREE.Clock();
+
 init();
 animate();
 
@@ -26,7 +29,7 @@ function init() {
 
   material = new THREE.MeshPhongMaterial({
     color: 0xeeeeee,
-    shading: THREE.FlatShading,
+    flatShading: true,
     vertexColors: THREE.VertexColors
   });
 
@@ -108,15 +111,55 @@ function init() {
 
 }
 
-function animate() {
 
-  requestAnimationFrame( animate );
-
+function update() {
   mesh1.rotation.x += 0.008;
   mesh1.rotation.y += 0.016;
 
-  renderer.render( scene, camera );
 
+  var delta = clock.getDelta(); // seconds.
+	var moveDistance = 200 * delta; // 200 pixels per second
+	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
+	
+	// local transformations
+
+	// move forwards/backwards/left/right
+	if ( keyboard.pressed("W") )
+		mesh5.translateZ( -moveDistance );
+	if ( keyboard.pressed("S") )
+		mesh5.translateZ(  moveDistance );
+	if ( keyboard.pressed("Q") )
+		mesh5.translateX( -moveDistance );
+	if ( keyboard.pressed("E") )
+		mesh5.translateX(  moveDistance );	
+
+	// rotate left/right/up/down
+	var rotation_matrix = new THREE.Matrix4().identity();
+	if ( keyboard.pressed("A") )
+		mesh5.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+	if ( keyboard.pressed("D") )
+		mesh5.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+	if ( keyboard.pressed("R") )
+		mesh5.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+	if ( keyboard.pressed("F") )
+		mesh5.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+	
+	if ( keyboard.pressed("Z") )
+	{
+		mesh5.position.set(0,25.1,0);
+		mesh5.rotation.set(0,0,0);
+	}
+
+}
+
+function render() {
+    renderer.render(scene, camera);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  render();
+  update();
 }
 
 animate();
