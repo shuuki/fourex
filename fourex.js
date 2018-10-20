@@ -1,23 +1,28 @@
 var camera, scene, renderer;
-var material, geometry, geometry2, geometry3, geometry4, mesh, mesh2, mesh3, mesh4;
+var material, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, mesh5;
 
 init();
 animate();
 
 function init() {
 
-  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-  camera.position.z = 1;
+  let fov = 60
+  let pixMult = 2
+  let screenWidth = window.innerWidth / pixMult
+  let screenHeight = window.innerHeight / pixMult
+
+  let sunColor = 0xfff3ea
+  let skyColor = 0x180918
+  let fogColor = 0x99eeee //new THREE.Color(0x99eeee)
+
+
+  camera = new THREE.PerspectiveCamera(fov, screenWidth / screenHeight, 0.01, 1000);
+  camera.position.z = 3;
 
   scene = new THREE.Scene();
 
-  //let fogColor = new THREE.Color(0x99eeee);
-  //scene.fog = new THREE.Fog(fogColor, 0.1, 2);
-  //scene.fog = new THREE.FogExp2(fogColor, 0.00025);
-  //scene.background = fogColor;
 
-
-
+  // Meshes
 
   material = new THREE.MeshPhongMaterial({
     color: 0xeeeeee,
@@ -25,15 +30,15 @@ function init() {
     vertexColors: THREE.VertexColors
   });
 
-  geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
+  geometry1 = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
   geometry2 = new THREE.BoxGeometry( 0.1, 2, 2 );
   geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
-  geometry4 = new THREE.BoxGeometry( 0.1, 2, 2 );
+  geometry4 = new THREE.ConeGeometry( 1, 3, 6 );
 
-  mesh = new THREE.Mesh( geometry, material );
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  scene.add( mesh );
+  mesh1 = new THREE.Mesh( geometry1, material );
+  mesh1.castShadow = true;
+  mesh1.receiveShadow = true;
+  scene.add( mesh1 );
 
   mesh2 = new THREE.Mesh( geometry2, material );
   mesh2.position.set(-1,0,0)
@@ -47,23 +52,30 @@ function init() {
   mesh3.receiveShadow = true;
   scene.add( mesh3 );
 
-  mesh4 = new THREE.Mesh( geometry4, material );
+  mesh4 = new THREE.Mesh( geometry2, material );
   mesh4.position.set(1,0,0)
   mesh4.castShadow = true;
   mesh4.receiveShadow = true;
   scene.add( mesh4 );
 
+  geometry4.rotateX( -0.5 );
+  geometry4.rotateZ( 0.5 );
+  mesh5 = new THREE.Mesh( geometry4, material );
+  mesh5.position.set(0,-1,0)
+  mesh5.castShadow = true;
+  mesh5.receiveShadow = true;
+  scene.add( mesh5 );
 
 
 
-  let sunColor = 0xfff3ea;
-  let skyColor = 0x180918
+
+  // Lights
 
   let ambientLight = new THREE.AmbientLight(skyColor)
   scene.add(ambientLight);
 
   let dirLight = new THREE.DirectionalLight(sunColor, 2);
-  dirLight.position.set(1, 0.4, 0.5);
+  dirLight.position.set(1, 2, 0.5);
   dirLight.shadow.mapSize.width = 2048;
   dirLight.shadow.mapSize.height = 2048;
   dirLight.castShadow = true;
@@ -72,9 +84,16 @@ function init() {
 
 
 
-  let pixMult = 3
-  let screenWidth = window.innerWidth / pixMult
-  let screenHeight = window.innerHeight / pixMult
+  // Fog
+
+  scene.fog = new THREE.Fog(fogColor, 2, 9);
+  //scene.fog = new THREE.FogExp2(skyColor, 0.2);
+  //scene.background = fogColor;
+
+
+
+
+  // Renderer
 
   renderer = new THREE.WebGLRenderer( { antialias: false } );
   renderer.setPixelRatio(window.devicePixelRatio)
@@ -87,14 +106,14 @@ function init() {
 
   document.body.appendChild( renderer.domElement );
 
-  }
+}
 
-  function animate() {
+function animate() {
 
   requestAnimationFrame( animate );
 
-  mesh.rotation.x += 0.008;
-  mesh.rotation.y += 0.016;
+  mesh1.rotation.x += 0.008;
+  mesh1.rotation.y += 0.016;
 
   renderer.render( scene, camera );
 
