@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-var material, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, mesh5;
+var material, geometry1, geometry2, geometry3, geometry4, mesh1, mesh2, mesh3, mesh4, shipMesh;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -13,6 +13,7 @@ function init() {
   let pixMult = 2
   let screenWidth = window.innerWidth / pixMult
   let screenHeight = window.innerHeight / pixMult
+  let shadowRes = 2048
 
   let sunColor = 0xfff3ea
   let skyColor = 0x180918
@@ -36,7 +37,7 @@ function init() {
   geometry1 = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
   geometry2 = new THREE.BoxGeometry( 0.1, 2, 2 );
   geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
-  geometry4 = new THREE.ConeGeometry( 1, 3, 6 );
+  geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 3 );
 
   mesh1 = new THREE.Mesh( geometry1, material );
   mesh1.castShadow = true;
@@ -61,13 +62,12 @@ function init() {
   mesh4.receiveShadow = true;
   scene.add( mesh4 );
 
-  geometry4.rotateX( -0.5 );
-  geometry4.rotateZ( 0.5 );
-  mesh5 = new THREE.Mesh( geometry4, material );
-  mesh5.position.set(0,-1,0)
-  mesh5.castShadow = true;
-  mesh5.receiveShadow = true;
-  scene.add( mesh5 );
+  geometry4.rotateX( -1.6 );
+  shipMesh = new THREE.Mesh( geometry4, material );
+  shipMesh.position.set(0,-0.72,0)
+  shipMesh.castShadow = true;
+  shipMesh.receiveShadow = true;
+  scene.add( shipMesh );
 
 
 
@@ -79,8 +79,8 @@ function init() {
 
   let dirLight = new THREE.DirectionalLight(sunColor, 2);
   dirLight.position.set(1, 2, 0.5);
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.mapSize.width = shadowRes;
+  dirLight.shadow.mapSize.height = shadowRes;
   dirLight.castShadow = true;
   scene.add(dirLight);
 
@@ -113,42 +113,60 @@ function init() {
 
 
 function update() {
-  mesh1.rotation.x += 0.008;
-  mesh1.rotation.y += 0.016;
+  
+  let delta = clock.getDelta(); // uptime in sec
 
+  mesh1.rotation.x += 0.5 * delta;
+  mesh1.rotation.y += 0.9 * delta;
 
-  var delta = clock.getDelta(); // seconds.
-	var moveDistance = 200 * delta; // 200 pixels per second
-	var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
-	
-	// local transformations
+  let moveDistance = 2 * delta; // 2 pixels per sec
+  let rotateAngle = Math.PI / 2 * delta; // pi/2 radians (90 degrees) per second
 
-	// move forwards/backwards/left/right
-	if ( keyboard.pressed("W") )
-		mesh5.translateZ( -moveDistance );
-	if ( keyboard.pressed("S") )
-		mesh5.translateZ(  moveDistance );
-	if ( keyboard.pressed("Q") )
-		mesh5.translateX( -moveDistance );
-	if ( keyboard.pressed("E") )
-		mesh5.translateX(  moveDistance );	
+  let rotation_matrix = new THREE.Matrix4().identity();
 
-	// rotate left/right/up/down
-	var rotation_matrix = new THREE.Matrix4().identity();
-	if ( keyboard.pressed("A") )
-		mesh5.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
-	if ( keyboard.pressed("D") )
-		mesh5.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
-	if ( keyboard.pressed("R") )
-		mesh5.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
-	if ( keyboard.pressed("F") )
-		mesh5.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
-	
-	if ( keyboard.pressed("Z") )
-	{
-		mesh5.position.set(0,25.1,0);
-		mesh5.rotation.set(0,0,0);
-	}
+  // Local Transformations
+
+  // Power Forward/Back
+  if ( keyboard.pressed("W") )
+    shipMesh.translateZ( -moveDistance );
+  if ( keyboard.pressed("S") )
+    shipMesh.translateZ(  moveDistance );
+
+  // Slide Left/Right
+  if ( keyboard.pressed("Z") )
+    shipMesh.translateX( -moveDistance );
+  if ( keyboard.pressed("C") )
+    shipMesh.translateX(  moveDistance );	
+
+  // Slide Up/Down
+  if ( keyboard.pressed("T") )
+    shipMesh.translateY(  moveDistance );	
+  if ( keyboard.pressed("G") )
+    shipMesh.translateY( -moveDistance );
+
+  // Pitch
+  if ( keyboard.pressed("F") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), rotateAngle);
+  if ( keyboard.pressed("R") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), -rotateAngle);
+
+  // Roll
+  if ( keyboard.pressed("Q") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), rotateAngle);
+  if ( keyboard.pressed("E") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -rotateAngle);
+
+  // Yaw
+  if ( keyboard.pressed("A") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), rotateAngle);
+  if ( keyboard.pressed("D") )
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -rotateAngle);
+
+  // reset
+  if ( keyboard.pressed("space") ) {
+    shipMesh.position.set(0,-0.72,0);
+    shipMesh.rotation.set(0,0,0);
+  }
 
 }
 
