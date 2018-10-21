@@ -53,8 +53,8 @@ function init() {
   geometry1 = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
   geometry2 = new THREE.BoxGeometry( 0.1, 2, 2 );
   geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
-  geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 3 );
-  geometry5 = new THREE.ConeGeometry( 0.125, 0.375, 3 );
+  geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 5 );
+  geometry5 = new THREE.ConeGeometry( 0.125, 0.375, 5 );
 
   mesh1 = new THREE.Mesh( geometry1, material );
   mesh1.castShadow = true;
@@ -79,7 +79,8 @@ function init() {
   mesh4.receiveShadow = true;
   scene.add( mesh4 );
 
-  geometry4.rotateX( -1.6 );
+  geometry4.rotateX( -Math.PI/2.5 );
+  geometry4.rotateZ( Math.PI );
   shipMesh = new THREE.Mesh( geometry4, material2 );
   shipMesh.position.set(0,-0.72,1)
   shipMesh.castShadow = true;
@@ -87,7 +88,8 @@ function init() {
   scene.add( shipMesh );
 
 
-  geometry5.rotateX( -1.6 );
+  geometry5.rotateX( -Math.PI/2.5 );
+  geometry5.rotateZ( Math.PI );
   mesh5 = new THREE.Mesh( geometry5, material3 );
   mesh5.position.set(0,0,0)
   //mesh5.castShadow = true;
@@ -159,21 +161,21 @@ function update() {
     shipMesh.translateZ(  maxMove );
 
   // Slide Left/Right
-  if ( keyboard.pressed("Z") )
+  if ( keyboard.pressed("A") )
     shipMesh.translateX( -maxMove );
-  if ( keyboard.pressed("C") )
+  if ( keyboard.pressed("D") )
     shipMesh.translateX(  maxMove );	
 
   // Slide Up/Down
-  if ( keyboard.pressed("T") )
+  if ( keyboard.pressed("R") )
     shipMesh.translateY(  maxMove );	
-  if ( keyboard.pressed("G") )
+  if ( keyboard.pressed("F") )
     shipMesh.translateY( -maxMove );
 
   // Pitch
-  if ( keyboard.pressed("F") )
+  if ( keyboard.pressed("down") )
     shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), maxRot);
-  if ( keyboard.pressed("R") )
+  if ( keyboard.pressed("up") )
     shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), -maxRot);
 
   // Roll
@@ -183,9 +185,9 @@ function update() {
     shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -maxRot);
 
   // Yaw
-  if ( keyboard.pressed("A") )
+  if ( keyboard.pressed("left") )
     shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), maxRot);
-  if ( keyboard.pressed("D") )
+  if ( keyboard.pressed("right") )
     shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -maxRot);
 
   // Reset Ship
