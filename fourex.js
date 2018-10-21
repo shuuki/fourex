@@ -1,5 +1,7 @@
 var camera, scene, renderer;
-var material, material2, material3, geometry1, geometry2, geometry3, geometry4, geometry5, geometry6, mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5, mesh6;
+var material, material2, material3,
+  geometry1, geometry2, geometry3, geometry4, geometry5, geometry6,
+  mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5, mesh6;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -83,7 +85,8 @@ function init() {
 
 
   mesh6 = new THREE.Mesh( geometry6, material );
-  mesh6.position.set(0,-3,0)
+  mesh6.position.set(0,-3
+    ,0)
   mesh6.rotation.set(0,0,Math.PI)
   mesh6.castShadow = true;
   mesh6.receiveShadow = true;
@@ -151,8 +154,9 @@ function init() {
 }
 
 
+
 function update() {
-  
+
   let delta = clock.getDelta(); // uptime in sec
 
   mesh1.rotation.x += 0.5 * delta;
@@ -161,49 +165,117 @@ function update() {
   let maxMove = 2 * delta; // 2 pixels per sec
   let maxRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
 
+  let moveMult = 1
+  let rotMult = 1
 
+  let moveAmt = maxMove * moveMult;
+  let rotAmt = maxRot * rotMult;
 
+ /* F B L R U D PU PD RU RD YU YD */
+
+ let thrust = {
+   F: false, B: false,
+   L: false, R: false,
+   U: false, D: false,
+   PU: false, PD: false,
+   RU: false, RD: false,
+   YU: false, YD: false
+ }
+
+  /*
+  let mass = 75;
+  let thrust = 1;
+  let drag = 0.9;
+  */
 
   // Local Transformations
 
   // Power Forward/Back
-  if (keyboard.pressed("W"))
-    shipMesh.translateZ(-maxMove);
-  if (keyboard.pressed("S"))
-    shipMesh.translateZ(maxMove);
+  if (keyboard.pressed("W")) {
+    shipMesh.translateZ(-moveAmt);
+    thrust.F = true;
+  } else {
+    thrust.F = false;
+  }
+  if (keyboard.pressed("S")) {
+    shipMesh.translateZ(moveAmt);
+    thrust.B = true;
+  } else {
+    thrust.B = false;
+  }
 
   // Slide Left/Right
-  if ( keyboard.pressed("A") )
-    shipMesh.translateX( -maxMove );
-  if ( keyboard.pressed("D") )
-    shipMesh.translateX(  maxMove );	
+  if (keyboard.pressed("A")) {
+    shipMesh.translateX(-moveAmt);
+    thrust.L = true;
+  } else {
+    thrust.L = false;
+  }
+  if (keyboard.pressed("D")) {
+    shipMesh.translateX(moveAmt);
+    thrust.R = true;
+  } else {
+    thrust.R = false;
+  }
 
   // Slide Up/Down
-  if ( keyboard.pressed("R") )
-    shipMesh.translateY( maxMove );	
-  if ( keyboard.pressed("F") )
-    shipMesh.translateY( -maxMove );
+  if (keyboard.pressed("R")) {
+    shipMesh.translateY(moveAmt);
+    thrust.U = true;
+  } else {
+    thrust.U = false;
+  }
+  if (keyboard.pressed("F")) {
+    shipMesh.translateY(-moveAmt);
+    thrust.D = true;
+  } else {
+    thrust.D = false;
+  }
 
   // Pitch
-  if ( keyboard.pressed("down") )
-    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), maxRot);
-  if ( keyboard.pressed("up") )
-    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -maxRot);
+  if (keyboard.pressed("up")) {
+    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt);
+    thrust.PU = true;
+  } else {
+    thrust.PU = false;
+  }
+  if (keyboard.pressed("down")) {
+    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt);
+    thrust.PD = true;
+  } else {
+    thrust.PD = false;
+  }
 
   // Roll
-  if ( keyboard.pressed("Q") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), maxRot);
-  if ( keyboard.pressed("E") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -maxRot);
+  if (keyboard.pressed("Q")) {
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), rotAmt);
+    thrust.RU = true;
+  } else {
+    thrust.RU = false;
+  }
+  if (keyboard.pressed("E")) {
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -rotAmt);
+    thrust.RD = true;
+  } else {
+    thrust.RD = false;
+  }
 
   // Yaw
-  if ( keyboard.pressed("left") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), maxRot);
-  if ( keyboard.pressed("right") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -maxRot);
+  if (keyboard.pressed("left")) {
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), rotAmt);
+    thrust.YU = true;
+  } else {
+    thrust.YU = false;
+  }
+  if (keyboard.pressed("right")) {
+    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -rotAmt);
+    thrust.YD = true;
+  } else {
+    thrust.YD = false;
+  }
 
   // Reset Ship
-  if ( keyboard.pressed("space") ) {
+  if (keyboard.pressed("space")) {
     shipMesh.position.set(0,-0.72,1);
     shipMesh.rotation.set(0,0,0);
   }
@@ -222,7 +294,7 @@ function update() {
 }
 
 function render() {
-    renderer.render(scene, camera);
+  renderer.render(scene, camera);
 }
 
 function animate() {
