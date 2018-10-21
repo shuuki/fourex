@@ -15,8 +15,8 @@ function init() {
   let screenHeight = window.innerHeight / pixMult
   let shadowRes = 2048
 
-  let sunColor = 0xfff3ea
-  let skyColor = 0x180918
+  let sunColor = 0xffefda
+  let skyColor = 0x181809
   let fogColor = 0x99eeee //new THREE.Color(0x99eeee)//
   let baseColor = 0xeeeeee
   let shipColor = 0x666666
@@ -126,7 +126,7 @@ function init() {
   renderer = new THREE.WebGLRenderer( { antialias: false } );
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize( screenWidth, screenHeight, false );
-  //renderer.setClearColor(skyColor);
+  renderer.setClearColor(fogColor);
   renderer.shadowMap.enabled = true;
   renderer.shadowCameraNear = camera.near;
   renderer.shadowCameraFar = camera.far;
@@ -155,10 +155,10 @@ function update() {
   // Local Transformations
 
   // Power Forward/Back
-  if ( keyboard.pressed("W") )
-    shipMesh.translateZ( -maxMove );
-  if ( keyboard.pressed("S") )
-    shipMesh.translateZ(  maxMove );
+  if (keyboard.pressed("W"))
+    shipMesh.translateZ(-maxMove);
+  if (keyboard.pressed("S"))
+    shipMesh.translateZ(maxMove);
 
   // Slide Left/Right
   if ( keyboard.pressed("A") )
@@ -168,15 +168,15 @@ function update() {
 
   // Slide Up/Down
   if ( keyboard.pressed("R") )
-    shipMesh.translateY(  maxMove );	
+    shipMesh.translateY( maxMove );	
   if ( keyboard.pressed("F") )
     shipMesh.translateY( -maxMove );
 
   // Pitch
   if ( keyboard.pressed("down") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), maxRot);
+    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), maxRot);
   if ( keyboard.pressed("up") )
-    shipMesh.rotateOnAxis( new THREE.Vector3(1,0,0), -maxRot);
+    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -maxRot);
 
   // Roll
   if ( keyboard.pressed("Q") )
