@@ -3,6 +3,7 @@
 flying sim
 
 | Keyboard     | Controls |
+|--------------|----------|
 | W / S        | Power Forward/Back |
 | A / D        | Slide Left/Right |
 | R / T        | Slide Up/Down |
