@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-var material, material2, material3, geometry1, geometry2, geometry3, geometry4, geometry5, mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5;
+var material, material2, material3, geometry1, geometry2, geometry3, geometry4, geometry5, geometry6, mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5, mesh6;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -55,6 +55,7 @@ function init() {
   geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
   geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 5 );
   geometry5 = new THREE.ConeGeometry( 0.125, 0.375, 5 );
+  geometry6 = new THREE.ConeGeometry( 12, 4, 20 );
 
   mesh1 = new THREE.Mesh( geometry1, material );
   mesh1.castShadow = true;
@@ -73,11 +74,22 @@ function init() {
   mesh3.receiveShadow = true;
   scene.add( mesh3 );
 
+
   mesh4 = new THREE.Mesh( geometry2, material );
   mesh4.position.set(1,0,0)
   mesh4.castShadow = true;
   mesh4.receiveShadow = true;
   scene.add( mesh4 );
+
+
+  mesh6 = new THREE.Mesh( geometry6, material );
+  mesh6.position.set(0,-3,0)
+  mesh6.rotation.set(0,0,Math.PI)
+  mesh6.castShadow = true;
+  mesh6.receiveShadow = true;
+  scene.add( mesh6 );
+
+  // Ship Models
 
   geometry4.rotateX( -Math.PI/2.5 );
   geometry4.rotateZ( Math.PI );
@@ -87,7 +99,6 @@ function init() {
   shipMesh.receiveShadow = true;
   scene.add( shipMesh );
 
-
   geometry5.rotateX( -Math.PI/2.5 );
   geometry5.rotateZ( Math.PI );
   mesh5 = new THREE.Mesh( geometry5, material3 );
@@ -95,6 +106,9 @@ function init() {
   //mesh5.castShadow = true;
   mesh5.receiveShadow = true;
   shipMesh.add( mesh5 );
+
+
+
 
 
   // Lights
@@ -146,8 +160,6 @@ function update() {
 
   let maxMove = 2 * delta; // 2 pixels per sec
   let maxRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
-
-  let rotation_matrix = new THREE.Matrix4().identity();
 
 
 
