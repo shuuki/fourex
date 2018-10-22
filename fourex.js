@@ -1,7 +1,8 @@
+
 var camera, scene, renderer;
-var material, material2, material3,
-  geometry1, geometry2, geometry3, geometry4, geometry5, geometry6,
-  mesh1, mesh2, mesh3, mesh4, shipMesh, mesh5, mesh6;
+var material, materialMetal, materialGlass,
+  geometry1, geometry2, geometry3, geometry4, geometry5, shipGeometry, shipGeometryWindow,
+  mesh1, mesh2, mesh3, mesh4, mesh6, mesh7, shipMesh, shipMeshWindow, thrustModel;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
@@ -9,28 +10,47 @@ var clock = new THREE.Clock();
 init();
 animate();
 
+
+
+
 function init() {
 
   let fov = 60
   let pixMult = 2
-  let screenWidth = window.innerWidth / pixMult
-  let screenHeight = window.innerHeight / pixMult
   let shadowRes = 2048
 
+
+  // Palette 
+  
   let sunColor = 0xffefda
   let skyColor = 0x181809
   let fogColor = 0x99eeee //new THREE.Color(0x99eeee)//
-  let baseColor = 0xeeeeee
-  let shipColor = 0x666666
+
+  let baseColor = 0xeddace
+  let shipColor = 0x696366
+  let nightColor = 0x187882
+  let flashColor = 0xb9b022
+
+  let screenWidth = window.innerWidth / pixMult
+  let screenHeight = window.innerHeight / pixMult
+
+
 
 
   camera = new THREE.PerspectiveCamera(fov, screenWidth / screenHeight, 0.01, 1000);
   camera.position.z = 3;
 
+
+
+
+  // Scene
+
   scene = new THREE.Scene();
 
 
-  // Meshes
+
+
+  // Materials
 
   material = new THREE.MeshPhongMaterial({
     color: baseColor,
@@ -39,77 +59,98 @@ function init() {
   });
   
   material2 = new THREE.MeshPhongMaterial({
-    color: shipColor,
+    color: flashColor,
     flatShading: true,
-    vertexColors: THREE.VertexColors
+    vertexColors: THREE.VertexColors,
+    emissive: nightColor
+  });
+  
+  materialMetal = new THREE.MeshPhongMaterial({
+    color: shipColor,
+    flatShading: true
   });
 
-  material3 = new THREE.MeshPhongMaterial({
+  materialGlass = new THREE.MeshPhongMaterial({
     color: shipColor,
     flatShading: false,
     wireframe: true,
-    emissive: shipColor,
+    emissive: shipColor
   });
 
 
-  geometry1 = new THREE.IcosahedronGeometry( 0.2 );
-  geometry2 = new THREE.BoxGeometry( 0.1, 2, 2 );
-  geometry3 = new THREE.BoxGeometry( 2, 0.1, 2 );
-  geometry4 = new THREE.ConeGeometry( 0.5, 1.5, 5 );
-  geometry5 = new THREE.ConeGeometry( 0.125, 0.375, 5 );
-  geometry6 = new THREE.ConeGeometry( 12, 4, 20 );
 
-  mesh1 = new THREE.Mesh( geometry1, material );
+
+  // Geometries
+
+  geometry1 = new THREE.IcosahedronGeometry(0.2);
+  geometry2 = new THREE.BoxGeometry(0.1, 2, 2);
+  geometry3 = new THREE.BoxGeometry(2, 0.1, 2);
+  geometry4 = new THREE.ConeGeometry(12, 4, 20);
+  geometry5 = new THREE.SphereGeometry(12, 40, 20);
+  shipGeometry = new THREE.ConeGeometry(0.5, 1.5, 5);
+  shipGeometryWindow = new THREE.ConeGeometry(0.125, 0.375, 5);
+  thrustGeometry = new THREE.ConeGeometry(0.05, 0.1, 5);
+
+
+
+
+  // Meshes
+
+  mesh1 = new THREE.Mesh(geometry1, material2);
   mesh1.castShadow = true;
   mesh1.receiveShadow = true;
-  scene.add( mesh1 );
+  scene.add(mesh1);
 
-  mesh2 = new THREE.Mesh( geometry2, material );
+  mesh2 = new THREE.Mesh(geometry2, material);
   mesh2.position.set(-1,0,0)
   mesh2.castShadow = true;
   mesh2.receiveShadow = true;
-  scene.add( mesh2 );
+  scene.add(mesh2);
 
-  mesh3 = new THREE.Mesh( geometry3, material );
+  mesh3 = new THREE.Mesh(geometry3, material);
   mesh3.position.set(0,-1,0)
   mesh3.castShadow = true;
   mesh3.receiveShadow = true;
-  scene.add( mesh3 );
+  scene.add(mesh3);
 
-
-  mesh4 = new THREE.Mesh( geometry2, material );
+  mesh4 = new THREE.Mesh(geometry2, material);
   mesh4.position.set(1,0,0)
   mesh4.castShadow = true;
   mesh4.receiveShadow = true;
-  scene.add( mesh4 );
+  scene.add(mesh4);
 
-
-  mesh6 = new THREE.Mesh( geometry6, material );
-  mesh6.position.set(0,-3
-    ,0)
+  mesh6 = new THREE.Mesh(geometry4, material);
+  mesh6.position.set(0,-3,0)
   mesh6.rotation.set(0,0,Math.PI)
   mesh6.castShadow = true;
   mesh6.receiveShadow = true;
-  scene.add( mesh6 );
+  scene.add(mesh6);
+  
+  mesh7 = new THREE.Mesh(geometry5, materialGlass);
+  mesh7.position.set(0,-3,0)
+  mesh7.castShadow = true;
+  mesh7.receiveShadow = true;
+  scene.add(mesh7);
 
   // Ship Models
 
-  geometry4.rotateX( -Math.PI/2.5 );
-  geometry4.rotateZ( Math.PI );
-  shipMesh = new THREE.Mesh( geometry4, material2 );
-  shipMesh.position.set(0,-0.72,1)
+  shipGeometry.rotateX(-Math.PI/2.5);
+  shipGeometry.rotateZ(Math.PI);
+  shipMesh = new THREE.Mesh(shipGeometry, materialMetal);
+  shipMesh.position.set(0,-0.71,1)
   shipMesh.castShadow = true;
   shipMesh.receiveShadow = true;
-  scene.add( shipMesh );
+  scene.add(shipMesh);
 
-  geometry5.rotateX( -Math.PI/2.5 );
-  geometry5.rotateZ( Math.PI );
-  mesh5 = new THREE.Mesh( geometry5, material3 );
-  mesh5.position.set(0,0,0)
-  //mesh5.castShadow = true;
-  mesh5.receiveShadow = true;
-  shipMesh.add( mesh5 );
+  shipGeometryWindow.rotateX(-Math.PI/2.5);
+  shipGeometryWindow.rotateZ(Math.PI);
+  shipMeshWindow = new THREE.Mesh(shipGeometryWindow, materialGlass);
+  shipMeshWindow.position.set(0,0,0)
+  //shipMeshWindow.castShadow = true;
+  shipMeshWindow.receiveShadow = true;
+  shipMesh.add(shipMeshWindow);
 
+  thrustModel = new THREE.Group();
 
 
 
@@ -119,39 +160,39 @@ function init() {
   let ambientLight = new THREE.AmbientLight(skyColor)
   scene.add(ambientLight);
 
-  let dirLight = new THREE.DirectionalLight(sunColor, 2);
-  dirLight.position.set(1, 2, 0.5);
-  dirLight.shadow.mapSize.width = shadowRes;
-  dirLight.shadow.mapSize.height = shadowRes;
-  dirLight.castShadow = true;
-  scene.add(dirLight);
+  let sunLight = new THREE.DirectionalLight(sunColor, 2);
+  sunLight.position.set(2.5, 6, 1);
+  sunLight.shadow.mapSize.width = shadowRes;
+  sunLight.shadow.mapSize.height = shadowRes;
+  sunLight.castShadow = true;
+  scene.add(sunLight);
 
 
 
 
   // Fog
 
-  scene.fog = new THREE.Fog(fogColor, 2, 9);
-  //scene.fog = new THREE.FogExp2(skyColor, 0.2);
-  //scene.background = fogColor;
+  //scene.fog = new THREE.Fog(fogColor, 2, 9);
+  scene.fog = new THREE.FogExp2(fogColor, 0.1);
+  //scene.background = skyColor;
 
 
 
 
   // Renderer
 
-  renderer = new THREE.WebGLRenderer( { antialias: false } );
+  renderer = new THREE.WebGLRenderer({ antialias: false });
   renderer.setPixelRatio(window.devicePixelRatio)
-  renderer.setSize( screenWidth, screenHeight, false );
-  renderer.setClearColor(fogColor);
+  renderer.setSize(screenWidth, screenHeight, false);
+  renderer.setClearColor(skyColor);
   renderer.shadowMap.enabled = true;
   renderer.shadowCameraNear = camera.near;
   renderer.shadowCameraFar = camera.far;
-  renderer.shadowMap.type = THREE.BasicShadowMap; //THREE.PCFSoftShadowMap
-
-  document.body.appendChild( renderer.domElement );
+  renderer.shadowMap.type = THREE.BasicShadowMap; // THREE.PCFSoftShadowMap //
+  document.body.appendChild(renderer.domElement);
 
 }
+
 
 
 
@@ -172,9 +213,12 @@ function update() {
   let moveAmt = thrustMove * moveMult;
   let rotAmt = thrustRot * rotMult;
 
-// easeOutQuart(t)
-// time 0-1
-//function easeOutQuart(t) { return 1-(--t)*t*t*t }
+  
+
+
+  // easeOutQuart(t)
+  // time 0-1
+  // function easeOutQuart(t) { return 1-(--t)*t*t*t }
 
   /*
   let mass = 75;
@@ -182,95 +226,110 @@ function update() {
   let drag = 0.9;
   */
 
+  
+
   // Local Transformations
 
   // Power Forward/Back
   if (keyboard.pressed("W")) {
-    shipMesh.translateZ(-moveAmt);
-
+    //shipMesh.translateZ(-moveAmt);
+    thrustModel.position.add(new THREE.Vector3(0,0,-moveAmt))
   }
   if (keyboard.pressed("S")) {
-    shipMesh.translateZ(moveAmt);
-
+    //shipMesh.translateZ(moveAmt);
+    thrustModel.position.add(new THREE.Vector3(0,0,moveAmt))
   }
 
   // Slide Left/Right
   if (keyboard.pressed("A")) {
-    shipMesh.translateX(-moveAmt);
-
+    //shipMesh.translateX(-moveAmt);
+    thrustModel.position.add(new THREE.Vector3(-moveAmt,0,0))
   }
   if (keyboard.pressed("D")) {
-    shipMesh.translateX(moveAmt);
-
+    //shipMesh.translateX(moveAmt);
+    thrustModel.position.add(new THREE.Vector3(moveAmt,0,0))
   }
 
   // Slide Up/Down
   if (keyboard.pressed("R")) {
-    shipMesh.translateY(moveAmt);
-
+    //shipMesh.translateY(moveAmt);
+    thrustModel.position.add(new THREE.Vector3(0,moveAmt,0))
   }
   if (keyboard.pressed("F")) {
-    shipMesh.translateY(-moveAmt);
-
+    //shipMesh.translateY(-moveAmt);
+    thrustModel.position.add(new THREE.Vector3(0,-moveAmt,0))
   }
 
   // Pitch
   if (keyboard.pressed("up")) {
-    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt)
   }
   if (keyboard.pressed("down")) {
-    shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt)
   }
 
   // Roll
   if (keyboard.pressed("Q")) {
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(0,0,1), rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), rotAmt)
   }
   if (keyboard.pressed("E")) {
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,0,1), -rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(0,0,1), -rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), -rotAmt)
   }
 
   // Yaw
   if (keyboard.pressed("left")) {
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(0,1,0), rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), rotAmt)
   }
   if (keyboard.pressed("right")) {
-    shipMesh.rotateOnAxis( new THREE.Vector3(0,1,0), -rotAmt);
-
+    //shipMesh.rotateOnAxis(new THREE.Vector3(0,1,0), -rotAmt);
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), -rotAmt)
   }
 
   // Reset Ship
   if (keyboard.pressed("space")) {
-    shipMesh.position.set(0,-0.72,1);
-    shipMesh.rotation.set(0,0,0);
+    //shipMesh.position.set(0,-0.71,1);
+    //shipMesh.rotation.set(0,0,0);
+    thrustModel.position.set(0,-0.71,1);
+    thrustModel.rotation.set(0,0,0);
   }
-
+  
+  
+  
+  shipMesh.applyMatrix(thrustModel.matrixWorld)
+  shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
+  shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
 
 
   // Chase Cam
-  var relativeCameraOffset = new THREE.Vector3(0,0,0.1); // set inside the cone for now
+  let relativeCameraOffset = new THREE.Vector3(0,0,0.1); // set inside the cone for now
 
-  var cameraOffset = relativeCameraOffset.applyMatrix4( shipMesh.matrixWorld );
+  let cameraOffset = relativeCameraOffset.applyMatrix4(shipMesh.matrixWorld);
   camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z)
-
   camera.rotation.set(shipMesh.rotation.x,shipMesh.rotation.y, shipMesh.rotation.z)
 
 }
 
+
+
+
 function render() {
   renderer.render(scene, camera);
 }
+
+
+
 
 function animate() {
   requestAnimationFrame(animate);
   render();
   update();
 }
+
 
 animate();
