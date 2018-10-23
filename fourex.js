@@ -297,12 +297,22 @@ function update() {
     thrustModel.position.set(0,-0.71,1);
     thrustModel.rotation.set(0,0,0);
   }
+
+
+  let tempMomentum = shipMesh.position.lerp(thrustModel.position, 0.005)
+  let tempInertia = thrustModel.position.lerp(shipMesh.position, 0.005)
+  //let tempRotMomentum = shipMesh.rotation.slerp(thrustModel.rotation, 0.005)
+  //let tempRotInertia = thrustModel.rotation.slerp(shipMesh.rotation, 0.005)
+
+  shipMesh.position.set(tempMomentum.x, tempMomentum.y, tempMomentum.z)
+  thrustModel.position.set(tempInertia.x, tempInertia.y, tempInertia.z)  
+
   
-  
-  
+  //shipMesh.position.lerpVectors(thrustModel.position, 0.1)
+
   //shipMesh.applyMatrix(thrustModel.matrixWorld)
-  shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
-  shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
+  //shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
+  //shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
 
 
