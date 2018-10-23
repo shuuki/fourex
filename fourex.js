@@ -299,20 +299,32 @@ function update() {
   }
 
 
+  // Translation Inertia
+
   let tempMomentum = shipMesh.position.lerp(thrustModel.position, 0.005)
   let tempInertia = thrustModel.position.lerp(shipMesh.position, 0.005)
-  //let tempRotMomentum = shipMesh.rotation.slerp(thrustModel.rotation, 0.005)
-  //let tempRotInertia = thrustModel.rotation.slerp(shipMesh.rotation, 0.005)
 
   shipMesh.position.set(tempMomentum.x, tempMomentum.y, tempMomentum.z)
   thrustModel.position.set(tempInertia.x, tempInertia.y, tempInertia.z)  
 
-  
-  //shipMesh.position.lerpVectors(thrustModel.position, 0.1)
+  // Rotation Inertia
 
-  //shipMesh.applyMatrix(thrustModel.matrixWorld)
+  let tempA = new THREE.Quaternion()
+  let tempB = new THREE.Quaternion()
+  tempA.setFromEuler(thrustModel.rotation)
+  tempB.setFromEuler(shipMesh.rotation)
+  let tempRotShip = tempB.slerp(tempA, 0.01)
+  let tempRotThrust = tempA.slerp(tempB, 0.0005)
+
+  // Update
+
+  shipMesh.rotation.setFromQuaternion(tempRotShip)
+  thrustModel.rotation.setFromQuaternion(tempRotThrust)
+
+  // old direct controllers
   //shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
   //shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
+
 
 
 
