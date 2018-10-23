@@ -11,5 +11,6 @@ flying sim
 | Q / E        | Roll counterclockwise/Clockwise |
 | Left / Right | Yaw Left/Right |
 | Space        | Reset Ship |
+| 2            | Big rear engine with 4x speed |
 
 Play: https://shuuki.github.io/fourex/fourex.html
