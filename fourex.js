@@ -232,32 +232,32 @@ function update() {
 
   // Power Forward/Back
   if (keyboard.pressed("W")) {
-    //shipMesh.translateZ(-moveAmt);
-    thrustModel.position.add(new THREE.Vector3(0,0,-moveAmt))
+    thrustModel.translateZ(-moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(0,0,-moveAmt))
   }
   if (keyboard.pressed("S")) {
-    //shipMesh.translateZ(moveAmt);
-    thrustModel.position.add(new THREE.Vector3(0,0,moveAmt))
+    thrustModel.translateZ(moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(0,0,moveAmt))
   }
 
   // Slide Left/Right
   if (keyboard.pressed("A")) {
-    //shipMesh.translateX(-moveAmt);
-    thrustModel.position.add(new THREE.Vector3(-moveAmt,0,0))
+    thrustModel.translateX(-moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(-moveAmt,0,0))
   }
   if (keyboard.pressed("D")) {
-    //shipMesh.translateX(moveAmt);
-    thrustModel.position.add(new THREE.Vector3(moveAmt,0,0))
+    thrustModel.translateX(moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(moveAmt,0,0))
   }
 
   // Slide Up/Down
   if (keyboard.pressed("R")) {
-    //shipMesh.translateY(moveAmt);
-    thrustModel.position.add(new THREE.Vector3(0,moveAmt,0))
+    thrustModel.translateY(moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(0,moveAmt,0))
   }
   if (keyboard.pressed("F")) {
-    //shipMesh.translateY(-moveAmt);
-    thrustModel.position.add(new THREE.Vector3(0,-moveAmt,0))
+    thrustModel.translateY(-moveAmt);
+    //thrustModel.position.add(new THREE.Vector3(0,-moveAmt,0))
   }
 
   // Pitch
@@ -300,7 +300,7 @@ function update() {
   
   
   
-  shipMesh.applyMatrix(thrustModel.matrixWorld)
+  //shipMesh.applyMatrix(thrustModel.matrixWorld)
   shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
   shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
