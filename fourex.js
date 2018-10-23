@@ -7,6 +7,8 @@ var material, materialMetal, materialGlass,
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 
+
+
 init();
 animate();
 
@@ -34,10 +36,7 @@ function init() {
   let screenWidth = window.innerWidth / pixMult
   let screenHeight = window.innerHeight / pixMult
 
-
-
-
-  camera = new THREE.PerspectiveCamera(fov, screenWidth / screenHeight, 0.01, 1000);
+  camera = new THREE.PerspectiveCamera(fov, screenWidth / screenHeight, 0.01, 150000);
   camera.position.z = 3;
 
 
@@ -155,6 +154,17 @@ function init() {
 
 
 
+  // Planets
+  
+  planetBuilder(14298.4,3, 0,0,67103,0xc3b39c); // jupiter
+  planetBuilder(366.0,3, 0,0,24933,0xf9e972); // io
+  planetBuilder(3122,3, 0,-3122.9,0,0x825032); // europa
+  planetBuilder(526.2,3, 0,0,-39938,0x887765); // ganymede
+  planetBuilder(482.0,3, 0,0,-121168,0x605340); // callisto
+  
+
+
+
   // Lights
 
   let ambientLight = new THREE.AmbientLight(skyColor)
@@ -173,7 +183,7 @@ function init() {
   // Fog
 
   //scene.fog = new THREE.Fog(fogColor, 2, 9);
-  scene.fog = new THREE.FogExp2(fogColor, 0.1);
+  //scene.fog = new THREE.FogExp2(fogColor, 0.1);
   //scene.background = skyColor;
 
 
@@ -300,6 +310,7 @@ function update() {
   //shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
 
+  //shipMesh.position.distanceTo(mesh1.position)
 
 
   // Chase Cam
