@@ -206,119 +206,93 @@ function update() {
 
   let thrustMove = 2 * delta; // 2 pixels per sec
   let thrustRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
+  let thrustBig = 8 * delta; // for the big engine
 
-  let moveMult = 1
-  let rotMult = 1
-
-  let moveAmt = thrustMove * moveMult;
-  let rotAmt = thrustRot * rotMult;
-
-  
-
-
-  // easeOutQuart(t)
-  // time 0-1
-  // function easeOutQuart(t) { return 1-(--t)*t*t*t }
-
-  /*
-  let mass = 75;
-  let thrust = 1;
-  let drag = 0.9;
-  */
-
-  
 
   // Local Transformations
 
   // Power Forward/Back
   if (keyboard.pressed("W")) {
-    thrustModel.translateZ(-moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(0,0,-moveAmt))
+    thrustModel.translateZ(-thrustMove);
   }
   if (keyboard.pressed("S")) {
-    thrustModel.translateZ(moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(0,0,moveAmt))
+    thrustModel.translateZ(thrustMove);
+  }
+
+  // Big Engine
+  if (keyboard.pressed("2")) {
+    thrustModel.translateZ(-thrustBig);
   }
 
   // Slide Left/Right
   if (keyboard.pressed("A")) {
-    thrustModel.translateX(-moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(-moveAmt,0,0))
+    thrustModel.translateX(-thrustMove);
   }
   if (keyboard.pressed("D")) {
-    thrustModel.translateX(moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(moveAmt,0,0))
+    thrustModel.translateX(thrustMove);
   }
 
   // Slide Up/Down
   if (keyboard.pressed("R")) {
-    thrustModel.translateY(moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(0,moveAmt,0))
+    thrustModel.translateY(thrustMove);
   }
   if (keyboard.pressed("F")) {
-    thrustModel.translateY(-moveAmt);
-    //thrustModel.position.add(new THREE.Vector3(0,-moveAmt,0))
+    thrustModel.translateY(-thrustMove);
   }
 
   // Pitch
   if (keyboard.pressed("up")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), -rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), -thrustRot)
   }
   if (keyboard.pressed("down")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(1,0,0), thrustRot)
   }
 
   // Roll
   if (keyboard.pressed("Q")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(0,0,1), rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), thrustRot)
   }
   if (keyboard.pressed("E")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(0,0,1), -rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), -rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,0,1), -thrustRot)
   }
 
   // Yaw
   if (keyboard.pressed("left")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(0,1,0), rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), thrustRot)
   }
   if (keyboard.pressed("right")) {
-    //shipMesh.rotateOnAxis(new THREE.Vector3(0,1,0), -rotAmt);
-    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), -rotAmt)
+    thrustModel.rotateOnAxis(new THREE.Vector3(0,1,0), -thrustRot)
   }
 
   // Reset Ship
   if (keyboard.pressed("space")) {
-    //shipMesh.position.set(0,-0.71,1);
-    //shipMesh.rotation.set(0,0,0);
     thrustModel.position.set(0,-0.71,1);
     thrustModel.rotation.set(0,0,0);
   }
 
 
-  // Translation Inertia
+
+
+  // Inertia Calculations
+
+  // Translation
 
   let tempMomentum = shipMesh.position.lerp(thrustModel.position, 0.005)
   let tempInertia = thrustModel.position.lerp(shipMesh.position, 0.005)
 
-  shipMesh.position.set(tempMomentum.x, tempMomentum.y, tempMomentum.z)
-  thrustModel.position.set(tempInertia.x, tempInertia.y, tempInertia.z)  
+  // Rotation
 
-  // Rotation Inertia
-
-  let tempA = new THREE.Quaternion()
-  let tempB = new THREE.Quaternion()
-  tempA.setFromEuler(thrustModel.rotation)
-  tempB.setFromEuler(shipMesh.rotation)
+  let tempA = new THREE.Quaternion().setFromEuler(thrustModel.rotation)
+  let tempB = new THREE.Quaternion().setFromEuler(shipMesh.rotation)
   let tempRotShip = tempB.slerp(tempA, 0.01)
   let tempRotThrust = tempA.slerp(tempB, 0.0005)
 
-  // Update
+  // Updates
 
+  shipMesh.position.set(tempMomentum.x, tempMomentum.y, tempMomentum.z)
   shipMesh.rotation.setFromQuaternion(tempRotShip)
+
+  thrustModel.position.set(tempInertia.x, tempInertia.y, tempInertia.z)  
   thrustModel.rotation.setFromQuaternion(tempRotThrust)
 
   // old direct controllers
