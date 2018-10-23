@@ -82,7 +82,7 @@ function init() {
   // Geometries
 
   geometry1 = new THREE.IcosahedronGeometry(0.2);
-  geometry2 = new THREE.BoxGeometry(0.1, 2, 2);
+  geometry2 = new THREE.BoxGeometry(0.1, 3, 1);
   geometry3 = new THREE.BoxGeometry(2, 0.1, 2);
   geometry4 = new THREE.ConeGeometry(12, 4, 20);
   geometry5 = new THREE.SphereGeometry(12, 40, 20);
@@ -110,7 +110,7 @@ function init() {
   mesh3.position.set(0,-1,0)
   mesh3.castShadow = true;
   mesh3.receiveShadow = true;
-  scene.add(mesh3);
+  //scene.add(mesh3);
 
   mesh4 = new THREE.Mesh(geometry2, material);
   mesh4.position.set(1,0,0)
@@ -123,10 +123,10 @@ function init() {
   mesh6.rotation.set(0,0,Math.PI)
   mesh6.castShadow = true;
   mesh6.receiveShadow = true;
-  scene.add(mesh6);
+  //scene.add(mesh6);
   
   mesh7 = new THREE.Mesh(geometry5, materialGlass);
-  mesh7.position.set(0,-3,0)
+  mesh7.position.set(0,-3.7,0)
   mesh7.castShadow = true;
   mesh7.receiveShadow = true;
   scene.add(mesh7);
@@ -309,6 +309,11 @@ function update() {
   //shipMesh.position.set(thrustModel.position.x, thrustModel.position.y, thrustModel.position.z)
   //shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
+
+  let ranger = shipMesh.position.distanceTo(mesh1.position)
+  let speeder = shipMesh.position.distanceTo(thrustModel.position)
+  document.getElementById("rangeometer").innerHTML = "Distance " + ranger.toFixed(2) + " units" 
+  document.getElementById("speedometer").innerHTML = speeder.toFixed(2) + " units / sec"
 
   //shipMesh.position.distanceTo(mesh1.position)
 
