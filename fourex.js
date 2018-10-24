@@ -216,7 +216,7 @@ function update() {
 
   let thrustMove = 2 * delta; // 2 pixels per sec
   let thrustRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
-  let thrustBig = 8 * delta; // for the big engine
+  let thrustBig = 25 * delta; // for the big engine
 
 
   // Local Transformations
@@ -312,8 +312,8 @@ function update() {
 
   let ranger = shipMesh.position.distanceTo(mesh1.position)
   let speeder = shipMesh.position.distanceTo(thrustModel.position)
-  document.getElementById("rangeometer").innerHTML = "Distance " + ranger.toFixed(2) + " units" 
-  document.getElementById("speedometer").innerHTML = speeder.toFixed(2) + " units / sec"
+  document.getElementById("rangeometer").innerHTML = "Range " + ranger.toFixed(2) + " U" 
+  document.getElementById("speedometer").innerHTML = "Speed " + speeder.toFixed(2) + " U/S"
 
   //shipMesh.position.distanceTo(mesh1.position)
 
