@@ -7,6 +7,9 @@ var material, materialMetal, materialGlass,
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
 
+// instantiate a loader
+var loader = new THREE.OBJLoader();
+
 
 
 init();
@@ -162,6 +165,29 @@ function init() {
   planetBuilder(526.2,3, 0,0,-39938,0x887765); // ganymede
   planetBuilder(482.0,3, 0,0,-121168,0x605340); // callisto
   
+
+
+
+  // load a resource
+  loader.load(
+  	// resource URL
+  	'models/1918.obj',
+  	// called when resource is loaded
+  	function (object) {
+  		scene.add(object);
+  	},
+  	// called when loading is in progresses
+  	function (xhr) {
+  		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+  	},
+  	// called when loading has errors
+  	function (errore) {
+  		console.log( 'An error happened' );
+  	}
+  );
+
+
+
 
 
 
