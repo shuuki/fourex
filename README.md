@@ -2,6 +2,8 @@
 
 flying sim
 
+Play: https://shuuki.github.io/fourex/fourex.html
+
 | Keyboard     | Controls |
 |--------------|----------|
 | W / S        | Power Forward/Back |
@@ -11,6 +13,12 @@ flying sim
 | Q / E        | Roll counterclockwise/Clockwise |
 | Left / Right | Yaw Left/Right |
 | Space        | Reset Ship |
-| 2            | Big rear engine with 4x speed |
+| 2            | Big rear engine with extra speed |
 
-Play: https://shuuki.github.io/fourex/fourex.html
+---
+
+Local dev:
+
+python -m SimpleHTTPServer
+
+http://0.0.0.0:8000/fourex.html
