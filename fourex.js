@@ -1,15 +1,12 @@
 
 var camera, scene, renderer;
 var material, materialMetal, materialGlass,
-  geometry1, geometry2, geometry3, geometry4, geometry5, shipGeometry, shipGeometryWindow,
-  mesh1, mesh2, mesh3, mesh4, mesh6, mesh7, shipMesh, shipMeshWindow, thrustModel;
+  geometry1, geometry2, geometry3, geometry4, geometry5, geometry6, shipGeometry, shipGeometryWindow,
+  mesh1, mesh2, mesh3, mesh4, mesh6, mesh7, shipMesh, shipMeshWindow, thrustModel,
+  texture1;
 
 var keyboard = new THREEx.KeyboardState();
 var clock = new THREE.Clock();
-
-// instantiate a loader
-var loader = new THREE.OBJLoader();
-
 
 
 init();
@@ -85,10 +82,20 @@ function init() {
   // Geometries
 
   geometry1 = new THREE.IcosahedronGeometry(0.2);
-  geometry2 = new THREE.BoxGeometry(0.1, 3, 1);
-  geometry3 = new THREE.BoxGeometry(2, 0.1, 2);
+  geometry2 = new THREE.BoxGeometry(0.2, 2, 1);
+  geometry3 = new THREE.TorusGeometry( 50, 2, 4, 360 ); //new THREE.BoxGeometry(2, 0.1, 2);
   geometry4 = new THREE.ConeGeometry(12, 4, 20);
   geometry5 = new THREE.SphereGeometry(12, 40, 20);
+  geometry6 = new THREE.PlaneGeometry(1000, 1000, 50, 50);
+  for (var i = 0, l = geometry6.vertices.length; i < l; i++) {
+    //geometry6.vertices[i].z = Math.random() * 50 //data[i] / 65535 * 25;
+  }
+  for (var i = 0, l = geometry6.faces.length; i < l; i++) {
+    geometry6.faces[i].color.setHSL( Math.random() * 0.3 + 0.7, Math.random() * 0.3 + 0.5, Math.random() * 0.4 + 0.2)
+		//geometry6.faces[i].color.setHSL( Math.random() * 0.2 + 0.1, Math.random() * 0.5, Math.random() * 0.4 + 0.2)
+	}
+
+
   shipGeometry = new THREE.ConeGeometry(0.5, 1.5, 5);
   shipGeometryWindow = new THREE.ConeGeometry(0.125, 0.375, 5);
   thrustGeometry = new THREE.ConeGeometry(0.05, 0.1, 5);
@@ -104,24 +111,35 @@ function init() {
   scene.add(mesh1);
 
   mesh2 = new THREE.Mesh(geometry2, material);
-  mesh2.position.set(-1,0,0)
+  mesh2.position.set(-1,-0.5,0)
   mesh2.castShadow = true;
   mesh2.receiveShadow = true;
   scene.add(mesh2);
 
+  mesh3 = new THREE.Mesh(geometry2, material);
+  mesh3.position.set(1,-0.5,0)
+  mesh3.castShadow = true;
+  mesh3.receiveShadow = true;
+  scene.add(mesh3);
+
+  /*
   mesh3 = new THREE.Mesh(geometry3, material);
   mesh3.position.set(0,-1,0)
   mesh3.castShadow = true;
   mesh3.receiveShadow = true;
   //scene.add(mesh3);
-
-  mesh4 = new THREE.Mesh(geometry2, material);
-  mesh4.position.set(1,0,0)
+  */
+  
+  /*
+  geometry6.rotateX(-Math.PI/2);
+  mesh4 = new THREE.Mesh(geometry6, material);
+  mesh4.position.set(0,-25,0)
   mesh4.castShadow = true;
   mesh4.receiveShadow = true;
-  scene.add(mesh4);
+  //scene.add(mesh4);
+  */
 
-  mesh6 = new THREE.Mesh(geometry4, material);
+  mesh6 = new THREE.Mesh(geometry6, material);
   mesh6.position.set(0,-3,0)
   mesh6.rotation.set(0,0,Math.PI)
   mesh6.castShadow = true;
@@ -132,7 +150,7 @@ function init() {
   mesh7.position.set(0,-3.7,0)
   mesh7.castShadow = true;
   mesh7.receiveShadow = true;
-  scene.add(mesh7);
+  //scene.add(mesh7);
 
   // Ship Models
 
@@ -156,7 +174,6 @@ function init() {
 
 
 
-
   // Planets
   
   planetBuilder(14298.4,3, 0,0,67103,0xc3b39c); // jupiter
@@ -164,28 +181,9 @@ function init() {
   planetBuilder(3122,3, 0,-3122.9,0,0x825032); // europa
   planetBuilder(526.2,3, 0,0,-39938,0x887765); // ganymede
   planetBuilder(482.0,3, 0,0,-121168,0x605340); // callisto
-  
 
 
-
-  // load a resource
-  loader.load(
-  	// resource URL
-  	'models/1918.obj',
-  	// called when resource is loaded
-  	function (object) {
-  		scene.add(object);
-  	},
-  	// called when loading is in progresses
-  	function (xhr) {
-  		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-  	},
-  	// called when loading has errors
-  	function (errore) {
-  		console.log( 'An error happened' );
-  	}
-  );
-
+  //euro(3122,3, 0,-3122.9,0,0x825032); // europa
 
 
 
@@ -197,7 +195,7 @@ function init() {
   scene.add(ambientLight);
 
   let sunLight = new THREE.DirectionalLight(sunColor, 2);
-  sunLight.position.set(2.5, 6, 1);
+  sunLight.position.set(2.5, 1, 1);
   sunLight.shadow.mapSize.width = shadowRes;
   sunLight.shadow.mapSize.height = shadowRes;
   sunLight.castShadow = true;
@@ -208,7 +206,7 @@ function init() {
 
   // Fog
 
-  //scene.fog = new THREE.Fog(fogColor, 2, 9);
+  //scene.fog = new THREE.Fog(fogColor, 20, 400);
   //scene.fog = new THREE.FogExp2(fogColor, 0.1);
   //scene.background = skyColor;
 
@@ -242,7 +240,7 @@ function update() {
 
   let thrustMove = 2 * delta; // 2 pixels per sec
   let thrustRot = Math.PI / 3 * delta; // pi/3 radians (90 degrees) per second
-  let thrustBig = 25 * delta; // for the big engine
+  let thrustBig = 20 * delta; // for the big engine
 
 
   // Local Transformations
@@ -336,10 +334,12 @@ function update() {
   //shipMesh.rotation.set(thrustModel.rotation.x, thrustModel.rotation.y, thrustModel.rotation.z)
 
 
+  /*
   let ranger = shipMesh.position.distanceTo(mesh1.position)
   let speeder = shipMesh.position.distanceTo(thrustModel.position)
   document.getElementById("rangeometer").innerHTML = "Range " + ranger.toFixed(2) + " U" 
   document.getElementById("speedometer").innerHTML = "Speed " + speeder.toFixed(2) + " U/S"
+  */
 
   //shipMesh.position.distanceTo(mesh1.position)
 

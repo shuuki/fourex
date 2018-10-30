@@ -25,3 +25,28 @@ function planetBuilder (a,b,x,y,z,c) {
 	scene.add(body);
 	
 }
+
+
+function euro (a,b,x,y,z,c) {
+	
+	let geo, mat, body;
+	
+	geo = new THREE.IcosahedronGeometry(a,b,x,y,z);
+
+	texture1 = new THREE.TextureLoader().load( "textures/europa.jpg" );
+
+	texture1.magFilter = THREE.NearestFilter;
+	
+	mat = new THREE.MeshPhongMaterial({
+		color: c || baseColor,
+		flatShading: true,
+		map: texture1
+	});
+
+	body = new THREE.Mesh(geo, mat);
+	body.position.set(x,y,z)
+	body.castShadow = true;
+	body.receiveShadow = true;
+	scene.add(body);
+	
+}
